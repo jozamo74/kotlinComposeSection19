@@ -1,7 +1,6 @@
-package com.example.section19.login
+package com.example.section19.login.ui
 
 import android.app.Activity
-import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,9 +28,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,13 +48,13 @@ import androidx.compose.ui.unit.sp
 import com.example.section19.R
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(viewModel: LoginViewModel) {
     Box( modifier = Modifier
         .fillMaxSize()
         .padding(8.dp)) {
 
         Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center))
+        Body(Modifier.align(Alignment.Center), viewModel)
         Footer(Modifier.align(Alignment.BottomCenter))
     }
 }
@@ -91,28 +90,21 @@ fun SignUp() {
 }
 
 @Composable
-fun Body(modifier: Modifier) {
-    var email by rememberSaveable {
-        mutableStateOf("")
-    }
-    var pass by rememberSaveable {
-        mutableStateOf("")
-    }
+fun Body(modifier: Modifier, viewModel: LoginViewModel) {
+    val email: String by viewModel.email.observeAsState(initial = "")
+    val pass: String by viewModel.pass.observeAsState(initial = "")
+    val isLoginEnable: Boolean by viewModel.isLoginEnabled.observeAsState(initial = false)
 
-    var isLoginEnable by rememberSaveable {
-        mutableStateOf(false)
-    }
     Column(modifier = modifier) {
         ImageLogo(Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.size(16.dp))
         Email(email) {
-            email = it
-            isLoginEnable = enableLogin(email, pass)
+            viewModel.onLoginChanged(it, pass)
         }
         Spacer(modifier = Modifier.size(4.dp))
         Password(pass) {
-            pass = it
-            isLoginEnable = enableLogin(email, pass)
+            viewModel.onLoginChanged(email, it)
+
         }
         Spacer(modifier = Modifier.size(8.dp))
         Forgotpassword(Modifier.align(Alignment.End))
@@ -277,7 +269,4 @@ fun Header(modifier: Modifier) {
         contentDescription = "close app",
         modifier = modifier.clickable { activity.finish() })
 }
-
-fun enableLogin(email: String, pass: String) =
-    Patterns.EMAIL_ADDRESS.matcher(email).matches() && pass.length > 6
 
