@@ -4,10 +4,7 @@ plugins {
 
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-<<<<<<< HEAD
 
-=======
->>>>>>> a4bb5e4469add95a2aa371fe9627d91130333827
 }
 
 
@@ -74,11 +71,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.convert.gson)
 
-<<<<<<< HEAD
-=======
-//  Dager-Hilt
->>>>>>> a4bb5e4469add95a2aa371fe9627d91130333827
     implementation(libs.hilt.android)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
